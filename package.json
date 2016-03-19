@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "express": "^4.13.4",
+    "neo4j": "^2.0.0-RC2",
     "superagent": "^1.8.1"
   },
   "repository": {

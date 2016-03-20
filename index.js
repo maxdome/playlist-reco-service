@@ -148,7 +148,8 @@ app.get('/watched/:movie', function (req, res) {
             });
             actors.push({actor: cast.person.ids.slug, movies: movies});
         });
-        neo.pushMovie(req.params.movie, actors);
+
+        neo.pushMovie(req.params.movie, actors.slice(0, 5));
         res.send(actors);
     });
 });

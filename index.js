@@ -20,7 +20,7 @@ var trakt = function(method, url) {
 };
 
 var neo = {
-    getRecos: function(userId,res) {
+    getRecos: function(res) {
         neodb.cypher({
             query: 'MATCH' + 
                 '(user:User { id: {u}})-[w:WATCHED]->(watched)-[a:ACTED_IN]-(actor:Actor), ' +
@@ -90,12 +90,6 @@ var neo = {
             }
         }, function (err, results) {
             if (err) throw err;
-            var result = results[0];
-            if (!result) {
-                console.log('No user found.');
-            } else {
-                var user = result['u'];
-                console.log(user);
 
                 actors.forEach(function(actor) {
                     neodb.cypher({
@@ -116,13 +110,11 @@ var neo = {
                         if (!result) {
                             console.log('No user found.');
                         } else {
-                            var user = result['u'];
+                            var user = result['actor'];
                             console.log(user);
                         }
                     });
                 });
-
-            }
         });
     }
 };
@@ -162,7 +154,7 @@ app.get('/watched/:movie', function (req, res) {
 });
 
 app.get('/reco/', function (req, res) {
-    neo.getRecos(1337, res);
+    neo.getRecos(res);
 });
 
 

@@ -24,13 +24,12 @@ var neo = {
         neodb.cypher({
             query: 'MATCH' + 
                 '(user:User { id: {u}})-[w:WATCHED]->(watched)-[a:ACTED_IN]-(actor:Actor), ' +
-                '(actor)-[:ACTED_IN]-(movie), ' +
-                'OPTIONAL MATCH i = (actor)<-[INTERESTED_IN]-(user) ' +
+                '(actor)-[:ACTED_IN]-(movie) ' +
                 'WHERE NOT ((user)-[:WATCHED]-(movie)) ' +
-                'WITH user, Count(w) + Count(a) + Count(i) as score, movie ' +
+                'WITH user, Count(w) + (Count(a)*2) as score, movie.id as mov ' +
                 'ORDER BY score DESC ' +
                 'LIMIT 10 ' +
-                'Return movie, score',
+                'Return mov, score',
             params: {
                 u: userId
             }

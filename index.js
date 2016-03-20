@@ -20,6 +20,29 @@ var trakt = function(method, url) {
 };
 
 var neo = {
+    getRecos: function(userId) {
+        neodb.cypher({
+            query: 'MATCH
+//First get all Actors he Watched the Most
+(user:User { id: {userId}})-[w:WATCHED]->(watched)-[a:ACTED_IN]-(actor:Actor),
+//And all The Movies They Have Acted In
+(actor)-[:ACTED_IN]-(movie),
+//And how many times hes interested in them
+OPTIONAL MATCH i = (actor)<-[INTERESTED_IN]-(user)
+//FILTER THOSE HE ALREADY SEEN
+WHERE NOT ((user)-[:WATCHED]-(movie))
+WITH user, Count(w) + Count(a) + Count(i) as score, movie
+ORDER BY score DESC
+Return movie, score',
+            params: {
+                userId: userId
+            }
+        }, function(err, results){
+            if (err) throw err;
+            return results
+        });
+    },
+
     pushActor: function(actorName, movies) {
         neodb.cypher({
             query: 'MERGE (u:User {id: {userId}})' +
@@ -140,6 +163,11 @@ app.get('/watched/:movie', function (req, res) {
         res.send(actors);
     });
 });
+
+app.get('/reco/', function (req, res) {
+    res.send(neo.getRecos(1337);
+});
+
 
 app.get('/genres/:type', function (req, res) {
     request
